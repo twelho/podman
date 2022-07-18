@@ -128,6 +128,10 @@ func buildFlags(cmd *cobra.Command) {
 	flags.String("progress", "auto", "buildx --progress")
 	_ = flags.MarkHidden("progress")
 
+	// buildx build --allow ignored, but added for compliance
+	flags.String("allow", "auto", "buildx --allow")
+	_ = flags.MarkHidden("allow")
+
 	// TODO: Comment
 	flags.BoolVar(&buildOpts.Push, "push", false, "Push image to registry after building")
 
