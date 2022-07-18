@@ -41,6 +41,9 @@ type buildFlagsWrapper struct {
 
 	// SquashAll squashes all layers into a single layer.
 	SquashAll bool
+
+	// TODO: Comment
+	Push bool
 }
 
 var (
@@ -123,6 +126,9 @@ func buildFlags(cmd *cobra.Command) {
 	// buildx build --progress ignored, but added for compliance
 	flags.String("progress", "auto", "buildx --progress")
 	_ = flags.MarkHidden("progress")
+
+	// TODO: Comment
+	flags.BoolVar(&buildOpts.Push, "push", false, "Push image to registry after building")
 
 	// Podman flags
 	flags.BoolVarP(&buildOpts.SquashAll, "squash-all", "", false, "Squash all layers into a single layer")
@@ -309,6 +315,14 @@ func build(cmd *cobra.Command, args []string) error {
 
 		registry.SetExitCode(exitCode)
 		return err
+	}
+
+	if cmd.Flags().Changed("push") && buildOpts.Push {
+		if err := registry.ImageEngine().Push(registry.GetContext(), apiBuildOpts.Output, apiBuildOpts.Output, entities.ImagePushOptions{
+			All: true,
+		}); err != nil {
+			return err
+		}
 	}
 
 	if cmd.Flag("iidfile").Changed {
