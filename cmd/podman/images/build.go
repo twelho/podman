@@ -3,6 +3,7 @@ package images
 import (
 	"errors"
 	"fmt"
+	"github.com/containers/image/v5/types"
 	"io"
 	"io/ioutil"
 	"os"
@@ -319,7 +320,8 @@ func build(cmd *cobra.Command, args []string) error {
 
 	if cmd.Flags().Changed("push") && buildOpts.Push {
 		if err := registry.ImageEngine().Push(registry.GetContext(), apiBuildOpts.Output, apiBuildOpts.Output, entities.ImagePushOptions{
-			All: true,
+			All:           true,
+			SkipTLSVerify: types.OptionalBoolTrue,
 		}); err != nil {
 			return err
 		}
